@@ -4,6 +4,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { initializeApp } from "firebase/app";
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { config } from './firebase';
+
+const app = initializeApp(config);
+const analytics = getAnalytics(app);
+logEvent(analytics, 'testing')
 
 const queryClient = new QueryClient()
 
