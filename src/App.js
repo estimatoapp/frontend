@@ -1,15 +1,46 @@
 import './App.css';
-import { useQuery } from '@tanstack/react-query';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
+import { useState } from 'react';
+import emailValidator from 'email-validator'
 
 function App() {
-  const query = useQuery(['helloWorld'], async () => {
-    const response = await fetch('https://api.estimato.app/')
-    const data = await response.json()
-    return data
-  })
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const isPasswordValid = (password) => {
+    return password.length >= 8
+  }
+
+  const isEmailValid = (email) => {
+    return emailValidator.validate(email)
+  }
+
+  const createAccount = async (email, password) => {
+    if (isPasswordValid(password) && isEmailValid(email)) {
+      const auth = getAuth();
+
+      try {
+        const user = await createUserWithEmailAndPassword(auth, email, password)
+        console.log(user)
+      } catch(error) {
+        console.error(error)
+      }
+    }
+  }
 
   return (
-    <p>{query?.data?.hello}</p>
+    <div class="container">
+      <h2>Sign up</h2>
+      <label>
+        <input type="text" placeholder="Email" onChange={(event) => setEmail(event.target.value)} value={email} />
+        Must contain valid email.
+      </label>
+      <label>
+        <input type="password" placeholder="Password" onChange={(event) => setPassword(event.target.value)} value={password} />
+        Password must be absurdly complex.
+      </label>
+      <button onClick={() => createAccount(email, password) }>Create account</button>
+    </div>
   );
 }
 
