@@ -1,5 +1,4 @@
 import './App.css';
-import { getAuth, createUserWithEmailAndPassword as createUser } from 'firebase/auth';
 import { useState } from 'react';
 import emailValidator from 'email-validator';
 
@@ -17,25 +16,32 @@ function App() {
 
   const createAccount = async (email, password) => {
     if (isPasswordValid(password) && isEmailValid(email)) {
-      const auth = getAuth();
+      // TODO we need to add a first name and last name field
+      const user = {
+        firstName: "Bob",
+        lastName: "Ross",
+        email,
+        password
+      };
 
-      try {
-        const user = await createUser(auth, email, password);
-        console.log(user);
-      } catch(error) {
-        console.error(error);
-      }
+      await fetch('http://localhost:3001/user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+      })
     }
   };
 
   return (
-    <div class="container">
+    <div className="container">
       <h2>Sign up</h2>
-      <label for="email-input">
+      <label htmlFor="email-input">
         <input id="email-input" type="text" placeholder="Email" onChange={(event) => setEmail(event.target.value)} value={email} />
         Must contain valid email.
       </label>
-      <label for="password-input">
+      <label htmlFor="password-input">
         <input id="password-input" type="password" placeholder="Password" onChange={(event) => setPassword(event.target.value)} value={password} />
         Password must be absurdly complex.
       </label>
