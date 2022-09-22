@@ -1,47 +1,60 @@
 import './App.css';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
 import { useState } from 'react';
-import emailValidator from 'email-validator'
+import emailValidator from 'email-validator';
 
 function App() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const isPasswordValid = (password) => {
-    return password.length >= 8
-  }
+    return password.length >= 8;
+  };
 
   const isEmailValid = (email) => {
-    return emailValidator.validate(email)
-  }
+    return emailValidator.validate(email);
+  };
 
-  const createAccount = async (email, password) => {
+  const createAccount = async ({email, password, firstName, lastName}) => {
     if (isPasswordValid(password) && isEmailValid(email)) {
-      const auth = getAuth();
+      const user = {
+        firstName,
+        lastName,
+        email,
+        password
+      };
 
-      try {
-        const user = await createUserWithEmailAndPassword(auth, email, password)
-        console.log(user)
-      } catch(error) {
-        console.error(error)
-      }
+      await fetch('http://localhost:3001/user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+      })
     }
-  }
+  };
 
   return (
-    <div class="container">
+    <div className="container">
       <h2>Sign up</h2>
-      <label>
-        <input type="text" placeholder="Email" onChange={(event) => setEmail(event.target.value)} value={email} />
+      <label htmlFor="first-name">
+        <input id="first-name" type="text" placeholder="First Name" onChange={(event) => setFirstName(event.target.value)} value={firstName} />
+      </label>
+      <label htmlFor="last-name">
+        <input id="last-name" type="text" placeholder="Last Name" onChange={(event) => setLastName(event.target.value)} value={lastName} />
+      </label>
+      <label htmlFor="email-input">
+        <input id="email-input" type="text" placeholder="Email" onChange={(event) => setEmail(event.target.value)} value={email} />
         Must contain valid email.
       </label>
-      <label>
-        <input type="password" placeholder="Password" onChange={(event) => setPassword(event.target.value)} value={password} />
+      <label htmlFor="password-input">
+        <input id="password-input" type="password" placeholder="Password" onChange={(event) => setPassword(event.target.value)} value={password} />
         Password must be absurdly complex.
       </label>
-      <button onClick={() => createAccount(email, password) }>Create account</button>
+      <button onClick={() => createAccount({email, password, firstName, lastName}) }>Create account</button>
     </div>
   );
-}
+};
 
 export default App;
