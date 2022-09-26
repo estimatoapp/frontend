@@ -46,7 +46,7 @@ function App() {
       </label>
       <label htmlFor="email-input">
         <input id="email-input" type="text" placeholder="Email" onChange={(event) => setEmail(event.target.value)} value={email} />
-        Must contain valid email.
+        {email.length > 0 ? "Must contain valid email.":""}
       </label>
       <label htmlFor="password-input">
         <input id="password-input" type="password" placeholder="Password" onChange={(event) => setPassword(event.target.value)} value={password} />
